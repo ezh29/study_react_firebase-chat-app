@@ -10,15 +10,14 @@ import ReduxThunk from "redux-thunk";
 import Reducer from "./redux/reducers";
 import { BrowserRouter as Router } from "react-router-dom";
 
-const createSroreWithMiddleware = applyMiddleware(
+const createStoreWithMiddleware = applyMiddleware(
   promiseMiddleware,
   ReduxThunk
 )(createStore);
-
 ReactDOM.render(
   <React.StrictMode>
     <Provider
-      store={createSroreWithMiddleware(
+      store={createStoreWithMiddleware(
         Reducer,
         window.__REDUX_DEVTOOLS_EXTENSION__ &&
           window.__REDUX_DEVTOOLS_EXTENSION__()
@@ -31,7 +30,6 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById("root")
 );
-
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

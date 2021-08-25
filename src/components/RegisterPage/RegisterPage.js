@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import firebase from "../../firebase";
 import md5 from "md5";
-
 function RegisterPage() {
   const {
     register,
@@ -11,9 +10,8 @@ function RegisterPage() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [errorFromSunmit, setErrorFromSubmit] = useState("");
+  const [errorFromSubmit, setErrorFromSubmit] = useState("");
   const [loading, setLoading] = useState(false);
-
   const password = useRef();
   password.current = watch("password");
 
@@ -23,6 +21,7 @@ function RegisterPage() {
       let createdUser = await firebase
         .auth()
         .createUserWithEmailAndPassword(data.email, data.password);
+
       //firebase에서 생성한 유저에 추가 정보 입력
       await createdUser.user.updateProfile({
         displayName: data.name,
@@ -30,13 +29,11 @@ function RegisterPage() {
           createdUser.user.email
         )}?d=identicon`,
       });
-
       //firebase 데이터베이스에 저장해주기
       await firebase.database().ref("users").child(createdUser.user.uid).set({
         name: createdUser.user.displayName,
         image: createdUser.user.photoURL,
       });
-
       console.log("createdUser", createdUser);
       setLoading(false);
     } catch (error) {
@@ -44,10 +41,9 @@ function RegisterPage() {
       setLoading(false);
       setTimeout(() => {
         setErrorFromSubmit("");
-      }, 50000);
+      }, 5000);
     }
   };
-
   return (
     <div className="auth-wrapper">
       <div style={{ textAlign: "center" }}>
@@ -57,7 +53,6 @@ function RegisterPage() {
         <label>Email</label>
         <input type="email" {...register("email", { required: true })} />
         {errors.email && <p>email을 입력해 주세요</p>}
-
         <label>name</label>
         <input {...register("name", { required: true, maxLength: 10 })} />
         {errors.name && errors.name.type === "required" && (
@@ -78,7 +73,6 @@ function RegisterPage() {
         {errors.password && errors.password.type === "maxLength" && (
           <p>6글자 안으로입력해주세요</p>
         )}
-
         <label>Password Confirm</label>
         <input
           name="password_confirm"
@@ -94,10 +88,8 @@ function RegisterPage() {
           errors.password_confirm.type === "validate" && (
             <p>암호확인이 일치하지 않습니다.</p>
           )}
-
-        {errorFromSunmit && <p>{errorFromSunmit}</p>}
+        {errorFromSubmit && <p>{errorFromSubmit}</p>}
         <input type="submit" disabled={loading} />
-
         <Link style={{ color: "gray", textDecoration: "none" }} to="/login">
           이미 아이디가 있다면...
         </Link>

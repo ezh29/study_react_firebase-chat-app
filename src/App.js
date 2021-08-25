@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
+import "./App.css";
 import { Switch, Route, useHistory } from "react-router-dom";
-
 import ChatPage from "./components/ChatPage/ChatPage";
 import LoginPage from "./components/LoginPage/LoginPage";
 import RegisterPage from "./components/RegisterPage/RegisterPage";
-
-import firebase from "./firebase";
+import firebase from "firebase";
 
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "./redux/actions/user_action";
@@ -17,7 +16,6 @@ function App() {
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        //로그인 된 상태
         history.push("/");
         dispatch(setUser(user));
       } else {
@@ -38,5 +36,4 @@ function App() {
     );
   }
 }
-
 export default App;
