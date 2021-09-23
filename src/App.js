@@ -22,7 +22,7 @@ function App() {
         history.push("/login");
       }
     });
-  }, []);
+  }, [dispatch,history]);
 
   if (isLoading) {
     return <div>로딩중</div>;

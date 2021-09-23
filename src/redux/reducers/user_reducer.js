@@ -4,7 +4,7 @@ const initialUserState = {
   currentUser: null,
   isLoading: true,
 };
-
+// eslint-disable-next-line
 export default function (state = initialUserState, action) {
   switch (action.type) {
     case SET_USER:
@@ -15,6 +15,7 @@ export default function (state = initialUserState, action) {
       };
 
     default:
-      return state;
+      return {...state,isLoading: false,};
+
   }
 }
