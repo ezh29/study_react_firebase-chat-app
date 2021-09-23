@@ -5,6 +5,7 @@ import ChatPage from "./components/ChatPage/ChatPage";
 import LoginPage from "./components/LoginPage/LoginPage";
 import RegisterPage from "./components/RegisterPage/RegisterPage";
 import firebase from "firebase";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "./redux/actions/user_action";
@@ -22,7 +23,7 @@ function App() {
         history.push("/login");
       }
     });
-  }, [dispatch,history]);
+  }, [dispatch, history]);
 
   if (isLoading) {
     return <div>로딩중</div>;
