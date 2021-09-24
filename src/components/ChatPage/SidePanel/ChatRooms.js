@@ -18,7 +18,13 @@ export class ChatRooms extends Component {
     }
 
     componentDidMount() {
+        //컴포넌트 마운트시 리스너 추가
         this.AddChatRoomsListeners();
+    }
+
+    componentWillUnmount() {
+        //컴포넌트 디스트로이할시 리스너 끄기
+        this.state.chatRoomRef.off();
     }
 
     setFirstChatRoom = () => {
