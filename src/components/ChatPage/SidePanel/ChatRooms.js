@@ -12,18 +12,29 @@ export class ChatRooms extends Component {
         name: "",
         description: "",
         chatRoomRef: firebase.database().ref("chatRooms"),
-        chatRooms: []
+        chatRooms: [],
+        firstLoad: true,
+        activeChatRoomId: ""
     }
 
     componentDidMount() {
         this.AddChatRoomsListeners();
     }
 
+    setFirstChatRoom = () => {
+        const firstChatRoom = this.state.chatRooms[0]
+        if (this.state.firstLoad && this.state.chatRooms.length > 0) {
+            this.props.dispatch(setCurrentChatRoom(firstChatRoom))
+            this.setState({ activeChatRoomId: firstChatRoom.id })
+        }
+        this.setState({ firstLoad: false })
+    }
+
     AddChatRoomsListeners = () => {
         let chatRoomsArray = []
         this.state.chatRoomRef.on("child_added", DataSnapshot => {
             chatRoomsArray.push(DataSnapshot.val());
-            this.setState({ chatRooms: chatRoomsArray });
+            this.setState({ chatRooms: chatRoomsArray }, () => this.setFirstChatRoom());
         })
     }
 
@@ -44,10 +55,11 @@ export class ChatRooms extends Component {
 
     renderChatrooms = (chatRooms) =>
         chatRooms.length > 0 &&
-        chatRooms.map(room => (< li key={room.id} onClick={() => this.changeChatRoom(room)} >#{room.name}</li >))
+        chatRooms.map(room => (< li key={room.id} style={{ backgroundColor: room.id === this.state.activeChatRoomId && "#ffffff45" }} onClick={() => this.changeChatRoom(room)} >#{room.name}</li >))
 
     changeChatRoom = (room) => {
         this.props.dispatch(setCurrentChatRoom(room))
+        this.setState({ activeChatRoomId: room.id })
     }
 
     addChatRoom = async () => {
