@@ -8,7 +8,7 @@ import firebase from "firebase";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "./redux/actions/user_action";
+import { setUser, clearUser } from "./redux/actions/user_action";
 
 function App() {
   let history = useHistory();
@@ -21,6 +21,7 @@ function App() {
         dispatch(setUser(user));
       } else {
         history.push("/login");
+        dispatch(clearUser())
       }
     });
   }, [dispatch, history]);
