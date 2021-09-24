@@ -10,7 +10,20 @@ export class ChatRooms extends Component {
         show: false,
         name: "",
         description: "",
-        chatRoomRef: firebase.database().ref("chatRooms")
+        chatRoomRef: firebase.database().ref("chatRooms"),
+        chatRooms: []
+    }
+
+    componentDidMount() {
+        this.AddChatRoomsListeners();
+    }
+
+    AddChatRoomsListeners = () => {
+        let chatRoomsArray = []
+        this.state.chatRoomRef.on("child_added", DataSnapshot => {
+            chatRoomsArray.push(DataSnapshot.val());
+            this.setState({ chatRooms: chatRoomsArray });
+        })
     }
 
     handleClose = () => this.setState({ show: false });
@@ -27,6 +40,12 @@ export class ChatRooms extends Component {
     //name,description이 있으면 트루 리턴
     isFormValid = (name, description) =>
         name && description;
+
+    renderChatrooms = (chatRooms) =>
+        chatRooms.length > 0 &&
+        chatRooms.map(room => (< li key={room.id} >#{room.name}</li >))
+
+
 
     addChatRoom = async () => {
         //무작위로 키를 생성하기위해 .push().key
@@ -57,6 +76,8 @@ export class ChatRooms extends Component {
         }
     }
 
+
+
     render() {
         return (
             <div>
@@ -71,6 +92,11 @@ export class ChatRooms extends Component {
                         onClick={this.handleShow}
                     />
                 </div>
+                <ul style={{
+                    listStyleType: 'none', padding: '0',
+                }}>
+                    {this.renderChatrooms(this.state.chatRooms)}
+                </ul>
 
                 <Modal show={this.state.show} onHide={this.handleClose}>
                     <Modal.Header closeButton>
