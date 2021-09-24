@@ -26,7 +26,6 @@ export default function (state = initialUserState, action) {
         isLoading: false,
       }
 
-
     default:
       return { ...state, isLoading: false, };
 

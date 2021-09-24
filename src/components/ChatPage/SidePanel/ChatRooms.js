@@ -4,6 +4,7 @@ import { FaPlus } from 'react-icons/fa'
 import { Button, Modal, Form } from "react-bootstrap"
 import { connect } from 'react-redux'
 import firebase from 'firebase'
+import { setCurrentChatRoom } from '../../../redux/actions/chatRoom_action'
 
 export class ChatRooms extends Component {
     state = {
@@ -43,9 +44,11 @@ export class ChatRooms extends Component {
 
     renderChatrooms = (chatRooms) =>
         chatRooms.length > 0 &&
-        chatRooms.map(room => (< li key={room.id} >#{room.name}</li >))
+        chatRooms.map(room => (< li key={room.id} onClick={() => this.changeChatRoom(room)} >#{room.name}</li >))
 
-
+    changeChatRoom = (room) => {
+        this.props.dispatch(setCurrentChatRoom(room))
+    }
 
     addChatRoom = async () => {
         //무작위로 키를 생성하기위해 .push().key
