@@ -12,6 +12,7 @@ function MessageForm() {
     const [content, setContent] = useState("")
     const [errors, setErrors] = useState([])
     const [loading, setLoading] = useState(false)
+    const [percentage, setPercentage] = useState(0)
     const inputOpenImageRef = useRef()
     const storageRef = firebase.storage().ref()
 
@@ -73,6 +74,7 @@ function MessageForm() {
     const handleOpenImageRef = () => {
         inputOpenImageRef.current.click()
     }
+    //이미지 전송
     const handleUploadImage = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -80,7 +82,34 @@ function MessageForm() {
         const metadata = { contentType: file.type };
 
         try {
-            await storageRef.child(filePath).put(file, metadata)
+            setLoading(true)
+
+            //이미지 스토리지에 저장
+            let uploadTask = storageRef.child(filePath).put(file, metadata)
+            //await 있으면 리스너 사용 불가, 빼기
+            //let uploadTask = await storageRef.child(filePath).put(file, metadata)
+
+            //파일 저장 퍼센티지 구하기
+            uploadTask.on("state_changed",
+                UploadTaskSnapshot => {
+                    const percentage = Math.round(
+                        (UploadTaskSnapshot.bytesTransferred / UploadTaskSnapshot.totalBytes) * 100
+                    );
+                    setPercentage(percentage);
+                },
+                err => {
+                    setLoading(false)
+                    console.error(err);
+                },
+                () => {
+                    //저장이 다된 후에 파일 메세지 전송
+                    //저장된 파일을 다운로드 받을 수 있는 URL 가져오기
+                    uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                        messageRef.child(chatRoom.id).push().set(createMessage(downloadURL))
+                        setLoading(false)
+                    })
+                }
+            )
         } catch (error) {
             console.error(error);
             setErrors(prev => prev.concat(error.message))
@@ -89,6 +118,8 @@ function MessageForm() {
                 setErrors([]);
             }, 5000)
         }
+
+
 
     }
 
@@ -99,8 +130,9 @@ function MessageForm() {
                     <Form.Control as="textarea" rows={3} value={content} onChange={handleChange} />
                 </Form.Group>
             </Form>
-
-            <ProgressBar className="mt-2" now={60} label={`60%`} variant="warning" />
+            {!(percentage === 0 || percentage === 100) &&
+                <ProgressBar className="mt-2" now={percentage} label={`${percentage}%`} variant="warning" />
+            }
             <div>{errors.map(errorMsg => <p key={errorMsg}>{errorMsg}</p>)}</div>
 
             <Row className="mt-2">
@@ -110,7 +142,7 @@ function MessageForm() {
                     </Button>
                 </Col>
                 <Col>
-                    <Button onClick={handleOpenImageRef} variant="primary" size="lg" style={{ width: '100%' }}>
+                    <Button onClick={handleOpenImageRef} variant="primary" size="lg" style={{ width: '100%' }} disabled={loading}>
                         업로드
                     </Button>
                 </Col>
