@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { Form, ProgressBar, Row, Col, Button } from 'react-bootstrap'
 import firebase from 'firebase'
@@ -12,6 +12,10 @@ function MessageForm() {
     const [content, setContent] = useState("")
     const [errors, setErrors] = useState([])
     const [loading, setLoading] = useState(false)
+    const inputOpenImageRef = useRef()
+    const storageRef = firebase.storage().ref()
+
+
     //파이어베이스 메세지 저장 경로
     const messageRef = firebase.database().ref("messages")
 
@@ -66,6 +70,28 @@ function MessageForm() {
         }
     }
 
+    const handleOpenImageRef = () => {
+        inputOpenImageRef.current.click()
+    }
+    const handleUploadImage = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const filePath = `/message/public/${file.name}`;
+        const metadata = { contentType: file.type };
+
+        try {
+            await storageRef.child(filePath).put(file, metadata)
+        } catch (error) {
+            console.error(error);
+            setErrors(prev => prev.concat(error.message))
+            setLoading(false)
+            setTimeout(() => {
+                setErrors([]);
+            }, 5000)
+        }
+
+    }
+
     return (
         <div>
             <Form onSubmit={handleSubmit}>
@@ -84,11 +110,18 @@ function MessageForm() {
                     </Button>
                 </Col>
                 <Col>
-                    <Button variant="primary" size="lg" style={{ width: '100%' }}>
+                    <Button onClick={handleOpenImageRef} variant="primary" size="lg" style={{ width: '100%' }}>
                         업로드
                     </Button>
                 </Col>
             </Row>
+            <input
+                type="file"
+                accept="image/jpeg, image/png"
+                ref={inputOpenImageRef}
+                style={{ display: "none" }}
+                onChange={handleUploadImage}
+            />
         </div>
     )
 }
