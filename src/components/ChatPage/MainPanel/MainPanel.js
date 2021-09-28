@@ -22,7 +22,6 @@ export class MainPanel extends Component {
     }
 
     addMessagesListeners = (chatRoomId) => {
-        console.log("chatRoomId", chatRoomId)
         let messagesArray = [];
         this.setState({ messages: [] });
         this.state.messagesRef.child(chatRoomId).on("child_added",
