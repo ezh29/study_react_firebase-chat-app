@@ -9,7 +9,12 @@ export class MainPanel extends Component {
     state = {
         messages: [],
         messagesRef: firebase.database().ref("messages"),
-        messagesLoading: true
+        messagesLoading: true,
+        //메세지 검색에 필요한 state
+        searchTerm: "",
+        searchResults: [],
+        searchLoading: false
+
     }
 
     componentDidMount() {
@@ -18,6 +23,33 @@ export class MainPanel extends Component {
         if (chatRoom) {
             this.addMessagesListeners(chatRoom.id)
         }
+
+    }
+
+    handleSearchMessages = () => {
+        const chatRoomMessages = [...this.state.messages];
+        const regex = new RegExp(this.state.searchTerm, "gi");
+        //전체 메세지에서 정규식 맞는것만 acc에 축적해서 return
+        const searchResults = chatRoomMessages.reduce((acc, message) => {
+            if ((message.content && message.content.match(regex)) || message.user.name.match(regex)) {
+                acc.push(message);
+            }
+            return acc;
+        }, []);
+        this.setState({ searchResults });
+        setTimeout(() => this.setState({ searchLoading: false }), 1000);
+    }
+
+    //MessageHeader에 props로 내려줄 함수
+    handleSearchChange = event => {
+        //타자 친것 searchTerm에 저장
+        this.setState({
+            searchTerm: event.target.value,
+            searchLoading: true
+        },
+            //실제 채팅 검색 시작
+            () => this.handleSearchMessages()
+        )
 
     }
 
@@ -42,10 +74,10 @@ export class MainPanel extends Component {
 
 
     render() {
-        const { messages } = this.state;
+        const { messages, searchTerm, searchResults } = this.state;
         return (
             <div style={{ padding: "2rem" }}>
-                <MessageHeader />
+                <MessageHeader handleSearchChange={this.handleSearchChange} />
                 <div style={{
                     width: '100%',
                     height: '450px',
@@ -54,7 +86,7 @@ export class MainPanel extends Component {
                     marginBottom: '1rem',
                     overflowY: 'auto'
                 }}>
-                    {this.renderMessages(messages)}
+                    {searchTerm ? this.renderMessages(searchResults) : this.renderMessages(messages)}
                 </div>
                 <MessageForm />
             </div>

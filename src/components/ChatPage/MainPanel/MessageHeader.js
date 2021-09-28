@@ -5,7 +5,7 @@ import { FaLock } from 'react-icons/fa'
 import { MdFavorite } from 'react-icons/md'
 import { AiOutlineSearch } from 'react-icons/ai'
 
-function MessageHeader() {
+function MessageHeader({ handleSearchChange }) {
 
     const user = useSelector(state => state.user.currentUser)
 
@@ -20,6 +20,8 @@ function MessageHeader() {
                         <InputGroup className="mb-3">
                             <InputGroup.Text id="basic-addon1"><AiOutlineSearch /></InputGroup.Text>
                             <FormControl
+                                //글자 칠때마다 props로 받은 handleSearchChange함수 실행
+                                onChange={handleSearchChange}
                                 placeholder="Search Messages"
                                 aria-label="Search"
                                 aria-describedby="basic-addon1"
