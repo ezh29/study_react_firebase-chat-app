@@ -10,8 +10,12 @@ function Message({ message, user }) {
         return message.hasOwnProperty("image") && !message.hasOwnProperty("content");
     }
 
+    const isMessageMine = (message, user) => {
+        return message.user.id == user.uid
+    }
+
     return (
-        <div>
+        <div style={{ backgroundColor: isMessageMine(message, user) && "#ECECEC" }}>
             <Image src={message.user.image}
                 roundedCircle
                 style={{ width: '30px', height: '30px', marginTop: '3px' }}
