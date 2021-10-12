@@ -1,11 +1,24 @@
-import React from 'react'
+import React, { Component } from 'react'
+import { FaRegSmile } from 'react-icons/fa'
 
-function DirectMessages() {
-    return (
-        <div>
-            DirectMessages
-        </div>
-    )
+export class DirectMessages extends Component {
+
+    renderDirectMessages = () => {
+
+    }
+
+    render() {
+        return (
+            <div>
+                <span style={{ display: 'flex', alignItems: 'center' }}>
+                    <FaRegSmile style={{ margin: 3 }} /> DirectMessages (1)
+                </span>
+                <ul style={{ listStyleType: 'none', padding: 0 }}>
+                    {this.renderDirectMessages()}
+                </ul>
+            </div>
+        )
+    }
 }
 
 export default DirectMessages
