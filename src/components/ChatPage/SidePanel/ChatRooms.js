@@ -4,7 +4,7 @@ import { FaPlus } from 'react-icons/fa'
 import { Button, Modal, Form } from "react-bootstrap"
 import { connect } from 'react-redux'
 import firebase from 'firebase'
-import { setCurrentChatRoom } from '../../../redux/actions/chatRoom_action'
+import { setCurrentChatRoom, setPrivateChatRoom } from '../../../redux/actions/chatRoom_action'
 
 export class ChatRooms extends Component {
     state = {
@@ -66,6 +66,7 @@ export class ChatRooms extends Component {
     changeChatRoom = (room) => {
         this.props.dispatch(setCurrentChatRoom(room))
         this.setState({ activeChatRoomId: room.id })
+        this.props.dispatch(setPrivateChatRoom(false));
     }
 
     addChatRoom = async () => {
