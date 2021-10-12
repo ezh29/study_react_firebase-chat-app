@@ -7,6 +7,7 @@ function MessageForm() {
     //메세지에 같이 보낼 user와 chatRoom 정보 리덕스에서 useSelector로 가져옴
     const user = useSelector(state => state.user.currentUser)
     const chatRoom = useSelector(state => state.chatRoom.currentChatRoom)
+    const isPrivateChatRoom = useSelector(state => state.chatRoom.isPrivateChatRoom)
 
     //이 화면에서 쓰일 state들
     const [content, setContent] = useState("")
@@ -74,11 +75,20 @@ function MessageForm() {
     const handleOpenImageRef = () => {
         inputOpenImageRef.current.click()
     }
+
+    const getPath = () => {
+        if (isPrivateChatRoom) {
+            return `message/private/${chatRoom.id}`;
+        } else {
+            return "message/public";
+        }
+    }
+
     //이미지 전송
     const handleUploadImage = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
-        const filePath = `/message/public/${file.name}`;
+        const filePath = `${getPath()}/${file.name}`;
         const metadata = { contentType: file.type };
 
         try {

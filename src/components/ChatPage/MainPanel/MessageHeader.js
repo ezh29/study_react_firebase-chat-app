@@ -1,13 +1,15 @@
 import React from 'react'
 import { useSelector } from 'react-redux';
 import { Container, Row, Col, InputGroup, FormControl, Image, Accordion } from 'react-bootstrap'
-import { FaLock } from 'react-icons/fa'
+import { FaLock, FaLockOpen } from 'react-icons/fa'
 import { MdFavorite } from 'react-icons/md'
 import { AiOutlineSearch } from 'react-icons/ai'
 
 function MessageHeader({ handleSearchChange }) {
 
     const user = useSelector(state => state.user.currentUser)
+    const isPrivateChatRoom = useSelector(state => state.chatRoom.isPrivateChatRoom)
+    const chatRoom = useSelector(state => state.chatRoom.currentChatRoom)
 
 
 
@@ -15,7 +17,12 @@ function MessageHeader({ handleSearchChange }) {
         <div style={{ width: '100%', height: '170px', border: '.2rem solid @ececec', borderRadius: '4px', padding: '1rem', marginBottom: '1rem' }}>
             <Container>
                 <Row>
-                    <Col> <h2><FaLock /> 방이름 <MdFavorite /></h2></Col>
+                    <Col> <h2>
+                        {isPrivateChatRoom ?
+                            <FaLock style={{ marginBottom: '10px' }} />
+                            : <FaLockOpen style={{ marginBottom: '10px' }} />
+                        }
+                        {chatRoom && chatRoom.name} <MdFavorite /></h2></Col>
                     <Col>
                         <InputGroup className="mb-3">
                             <InputGroup.Text id="basic-addon1"><AiOutlineSearch /></InputGroup.Text>
